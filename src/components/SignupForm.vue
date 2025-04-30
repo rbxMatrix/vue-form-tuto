@@ -1,10 +1,11 @@
 <template>
-    <form >
+    <form @submit.prevent="handleSubmit">
         <label>Email:</label>
         <input type="email" required v-model="email">
 
         <label>Password:</label>
-        <input type="password" required v-model="password">     
+        <input type="password" required v-model="password">    
+        <div v-if="passwordError" class="error"> {{ passwordError }}</div> 
         
         <label>Role:</label>
         <select v-model="role">
@@ -15,11 +16,14 @@
             <input type="checkbox" v-model="terms" required>
             <label >Accept terms and condition</label>
         </div>
-    <label>Skills:</label>
-    <input type="text" v-model="tempSkill" @keyup.alt="addSkill">
-    <div v-for="skill in skills" :key="skill" class="pill">
-    {{ skill }}
-    </div>
+        <label>Skills:</label>
+        <input type="text" v-model="tempSkill" @keyup.alt="addSkill">
+        <div v-for="skill in skills" :key="skill" class="pill">
+            <span @click="deleteSkill(skill)">   {{ skill }}</span>
+        </div>
+        <div class="submit">
+            <button>Create account</button>
+        </div>
     </form>
     <p>Email: {{ email }}</p>
     <p>Password:{{ password }}</p>
@@ -36,7 +40,8 @@ export default {
       role:'designer',
       terms: false,
       tempSkill:'',
-      skills:[]
+      skills:[],
+      passwordError:''
     }
   },
   methods:{
@@ -48,6 +53,22 @@ export default {
             this.tempSkill=''
         }
 
+    },
+    deleteSkill(skill){
+        this.skills= this.skills.filter((item)=>{
+            return skill !==item
+        })
+    },
+    handleSubmit(){
+        this.passwordError=this.password.length>5 ?
+        '' :'Password muss be at least 6 chars long'
+        if(!this.passwordError){
+            console.log('email:', this.email)
+            console.log('password:', this.password)
+            console.log('role:', this.role)
+            console.log('skils:', this.skills)
+            console.log('terms accepted: ', this.terms)
+        }
     }
   }
 
@@ -56,11 +77,11 @@ export default {
 
 <style>
     form{
-        max-width: 420px;
-        margin: 30px;
+        max-width: 100%;
+        margin: 20%;
         background: white;
         text-align: left;
-        padding: 40px;
+        padding: 1%;
         border-radius: 10px;
     }
     label{
@@ -88,5 +109,33 @@ export default {
         position:relative;
         top: 2px;
     }
-
+    .pill{
+        display: inline-block;
+        margin: 20px 10px 0 0;
+        padding: 10px 6px;
+        background: #eee;
+        border-radius: 20px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        font-weight: bold;
+        color:#777;
+        cursor:pointer;
+    }
+    button{
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        border: 0;
+        border-radius:20px;
+        margin-top: 20px;
+    }
+    .submit{
+        text-align:center;
+    }
+    .error{
+        color:#ff0062;
+        margin-top: 10px;
+        font-size:0.8em;
+        font-weight: bold;
+    }
 </style>
